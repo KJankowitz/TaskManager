@@ -1,5 +1,5 @@
 #=====importing libraries===========
-'''This is the section where you will import libraries'''
+from datetime import date
 
 #====Login Section====
 
@@ -56,17 +56,19 @@ e - exit
                 print("Passwords do not match. Please retry.") 
 
     elif menu == 'a':
-        pass
-        '''This code block will allow a user to add a new task to task.txt file
-        - You can use these steps:
-            - Prompt a user for the following: 
-                - the username of the person whom the task is assigned to,
-                - the title of the task,
-                - the description of the task, and 
-                - the due date of the task.
-            - Then, get the current date.
-            - Add the data to the file task.txt
-            - Remember to include 'No' to indicate that the task is not complete.'''
+        
+        print("Please enter the following task information: ")
+        assigned_user = input("User assigned to task: ")
+        task_title = input("Title of task: ")
+        description = input("Description of the task: \n")
+        due_date = input("Task due date (eg 12 Jan 2024): ")
+        current_date = date.today()
+        # Convert current date to same format in tasks.txt
+        today = current_date.strftime("%d %b %Y")
+        complete = "No"
+
+        with open("tasks.txt", "a", encoding="utf-8") as file:
+            file.write(f"\n{assigned_user}, {task_title}, {description}, {today}, {due_date}, {complete}")
 
     elif menu == 'va':
     
