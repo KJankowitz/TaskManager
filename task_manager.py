@@ -2,11 +2,7 @@
 '''This is the section where you will import libraries'''
 
 #====Login Section====
-'''Here you will write code that will allow a user to login.
-    - Your code must read usernames and password from the user.txt file
-    - You can use a list or dictionary to store a list of usernames and passwords from the file
-    - Use a while loop to validate your user name and password
-'''
+
 usernames = []
 passwords = []
 
@@ -18,9 +14,6 @@ with open("user.txt", "r", encoding = "utf-8") as file:
         
         usernames.append(single_line[0])
         passwords.append(single_line[1])
-
-print(usernames)
-print(passwords)
 
 while True:
     print("Welcome to the TaskManager program! Please enter login details:")
@@ -35,9 +28,6 @@ while True:
         print("Invalid username. Try again.")
     elif pass_word not in passwords:
         print("Invalid password. Try again")
-    
-
-
 
 while True:
     # Present the menu to the user and 
@@ -51,15 +41,19 @@ e - exit
 : ''').lower()
 
     if menu == 'r':
-        pass
-        '''This code block will add a new user to the user.txt file
-        - You can use the following steps:
-            - Request input of a new username
-            - Request input of a new password
-            - Request input of password confirmation.
-            - Check if the new password and confirmed password are the same
-            - If they are the same, add them to the user.txt file,
-              otherwise present a relevant message'''
+        print("Enter credentials of new user:")
+        new_user = input("Username: ")
+        while True:
+            new_pass = input("Password: ")
+            repeat_pass = input("Confirm password: ")
+
+            if new_pass == repeat_pass:
+
+                with open("user.txt", "a", encoding = "utf-8") as file:
+                    file.write(f"{new_user}, {new_pass}\n")
+                break
+            else:
+                print("Passwords do not match. Please retry.") 
 
     elif menu == 'a':
         pass
