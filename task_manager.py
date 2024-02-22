@@ -29,6 +29,7 @@ while True:
     elif pass_word not in passwords:
         print("Invalid password. Try again")
 
+# Repeat menu presentation with while loop
 while True:
     # Present the menu to the user and 
     # make sure that the user input is converted to lower case.
@@ -40,6 +41,7 @@ vm - view my tasks
 e - exit
 : ''').lower()
 
+    # Register a new user
     if menu == 'r':
         print("Enter credentials of new user:")
         new_user = input("Username: ")
@@ -55,6 +57,7 @@ e - exit
             else:
                 print("Passwords do not match. Please retry.") 
 
+    # Add a new task
     elif menu == 'a':
         
         print("Please enter the following task information: ")
@@ -69,7 +72,8 @@ e - exit
 
         with open("tasks.txt", "a", encoding="utf-8") as file:
             file.write(f"\n{assigned_user}, {task_title}, {description}, {today}, {due_date}, {complete}")
-
+    
+    # View all tasks
     elif menu == 'va':
     
         with open("tasks.txt", "r", encoding="utf-8") as file:
@@ -85,17 +89,24 @@ Task complete?    \t{one_task[5]}
 Task description: \t{one_task[2]}
 ''')
 
+    # View tasks assigned to current user
     elif menu == 'vm':
-        pass
-        '''This code block will read the task from task.txt file and
-         print to the console in the format of Output 2 presented in the PDF
-         You can do it in this way:
-            - Read a line from the file
-            - Split the line where there is comma and space.
-            - Check if the username of the person logged in is the same as the 
-              username you have read from the file.
-            - If they are the same you print the task in the format of Output 2
-              shown in the PDF '''
+        print(f"\nAll tasks assigned to {user_name}: ")
+        
+        with open("tasks.txt", "r", encoding="utf-8") as file:
+            for line in file:
+                one_task = line.strip()
+                one_task = one_task.split(", ")
+                if user_name == one_task[0]:
+                    print(f'''\n
+Task:             \t{one_task[1]}
+Assigned to:      \t{one_task[0]}
+Date assigned:    \t{one_task[3]}
+Due date:         \t{one_task[4]}
+Task complete?    \t{one_task[5]}
+Task description: \t{one_task[2]}
+''')
+        
 
     elif menu == 'e':
         print('Goodbye!!!')
