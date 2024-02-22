@@ -50,7 +50,7 @@ e - exit
             if new_pass == repeat_pass:
 
                 with open("user.txt", "a", encoding = "utf-8") as file:
-                    file.write(f"{new_user}, {new_pass}\n")
+                    file.write(f"\n{new_user}, {new_pass}")
                 break
             else:
                 print("Passwords do not match. Please retry.") 
@@ -69,14 +69,19 @@ e - exit
             - Remember to include 'No' to indicate that the task is not complete.'''
 
     elif menu == 'va':
-        pass
-        '''This code block will read the task from task.txt file and
-         print to the console in the format of Output 2 presented in the PDF
-         You can do it in this way:
-            - Read a line from the file.
-            - Split that line where there is comma and space.
-            - Then print the results in the format shown in the Output 2 in the PDF
-            - It is much easier to read a file using a for loop.'''
+    
+        with open("tasks.txt", "r", encoding="utf-8") as file:
+            for line in file:
+                one_task = line.strip()
+                one_task = one_task.split(", ")
+                print(f'''\n
+Task:             \t{one_task[1]}
+Assigned to:      \t{one_task[0]}
+Date assigned:    \t{one_task[3]}
+Due date:         \t{one_task[4]}
+Task complete?    \t{one_task[5]}
+Task description: \t{one_task[2]}
+''')
 
     elif menu == 'vm':
         pass
