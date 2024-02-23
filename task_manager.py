@@ -11,7 +11,7 @@ with open("user.txt", "r", encoding = "utf-8") as file:
     for line in file:
         single_line = line.strip()
         single_line = single_line.split(", ")
-        
+
         usernames.append(single_line[0])
         passwords.append(single_line[1])
 
@@ -23,7 +23,7 @@ while True:
     if USER_NAME in usernames and pass_word in passwords:
         print("Login successful.")
         break
-    
+
     # Check for valid username, then valid password
     if USER_NAME not in usernames:
         print("Invalid username. Try again.")
@@ -35,7 +35,7 @@ while True:
 while True:
     # Present the menu to the user and 
     # make sure that the user input is converted to lower case.
-    
+
     # Check if user is admin for special s option:
     if USER_NAME == "admin":
         menu = input('''\nSelect one of the following options:
@@ -79,7 +79,7 @@ e - exit
     # Add a new task
     elif menu == 'a':
         print("Please enter the following task information: ")
-        
+
         assigned_user = input("User assigned to task: ")
         task_title = input("Title of task: ")
         description = input("Description of the task: \n")
@@ -111,7 +111,7 @@ Task description: \t{one_task[2]}
     # View tasks assigned to current user
     elif menu == 'vm':
         print(f"\nAll tasks assigned to {USER_NAME}: ")
- 
+
         with open("tasks.txt", "r", encoding="utf-8") as file:
             for line in file:
                 one_task = line.strip()
@@ -141,7 +141,7 @@ Task description: \t{one_task[2]}
 Total number of tasks:        \t{task_num}
 Total number of users:        \t{len(usernames)}
 ''')
- 
+
     elif menu == 'e':
         print('Goodbye!!!')
         exit()
