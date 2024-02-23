@@ -33,7 +33,19 @@ while True:
 while True:
     # Present the menu to the user and 
     # make sure that the user input is converted to lower case.
-    menu = input('''Select one of the following options:
+    
+    # Check if user is admin for special option:
+    if user_name == "admin":
+        menu = input('''\nSelect one of the following options:
+r - register a user
+a - add task
+va - view all tasks
+vm - view my tasks
+s - view statistics
+e - exit
+: ''').lower()
+    else:
+        menu = input('''Select one of the following options:
 r - register a user
 a - add task
 va - view all tasks
@@ -43,19 +55,22 @@ e - exit
 
     # Register a new user
     if menu == 'r':
-        print("Enter credentials of new user:")
-        new_user = input("Username: ")
-        while True:
-            new_pass = input("Password: ")
-            repeat_pass = input("Confirm password: ")
+        if user_name == "admin":
+            print("Enter credentials of new user:")
+            new_user = input("Username: ")
+            while True:
+                new_pass = input("Password: ")
+                repeat_pass = input("Confirm password: ")
 
-            if new_pass == repeat_pass:
+                if new_pass == repeat_pass:
 
-                with open("user.txt", "a", encoding = "utf-8") as file:
-                    file.write(f"\n{new_user}, {new_pass}")
-                break
-            else:
-                print("Passwords do not match. Please retry.") 
+                    with open("user.txt", "a", encoding = "utf-8") as file:
+                        file.write(f"\n{new_user}, {new_pass}")
+                    break
+                else:
+                    print("Passwords do not match. Please retry.")
+        else:
+            print("You are not authorized. Please request an admin to perform this action.") 
 
     # Add a new task
     elif menu == 'a':
@@ -106,7 +121,20 @@ Due date:         \t{one_task[4]}
 Task complete?    \t{one_task[5]}
 Task description: \t{one_task[2]}
 ''')
-        
+
+
+    elif menu == 's':
+        task_num = 0
+
+        with open("tasks.txt", "r", encoding = "utf-8") as file:
+
+            for line in file:
+                task_num += 1
+
+        print(f'''\n
+Total number of tasks: \t{task_num}
+Total number of users: \t{len(usernames)}''')
+
 
     elif menu == 'e':
         print('Goodbye!!!')
