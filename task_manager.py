@@ -17,25 +17,27 @@ with open("user.txt", "r", encoding = "utf-8") as file:
 
 while True:
     print("Welcome to the TaskManager program! Please enter login details:")
-    user_name = input("Username: ")
+    USER_NAME = input("Username: ")
     pass_word = input("Password: ")
 
-    if user_name in usernames and pass_word in passwords:
+    if USER_NAME in usernames and pass_word in passwords:
         print("Login successful.")
         break
     
-    if user_name not in usernames:
+    # Check for valid username, then valid password
+    if USER_NAME not in usernames:
         print("Invalid username. Try again.")
     elif pass_word not in passwords:
         print("Invalid password. Try again")
 
+#====Menu Section====
 # Repeat menu presentation with while loop
 while True:
     # Present the menu to the user and 
     # make sure that the user input is converted to lower case.
     
-    # Check if user is admin for special option:
-    if user_name == "admin":
+    # Check if user is admin for special s option:
+    if USER_NAME == "admin":
         menu = input('''\nSelect one of the following options:
 r - register a user
 a - add task
@@ -55,7 +57,8 @@ e - exit
 
     # Register a new user
     if menu == 'r':
-        if user_name == "admin":
+
+        if USER_NAME == "admin":    # Only valid if user is admin
             print("Enter credentials of new user:")
             new_user = input("Username: ")
             while True:
@@ -69,13 +72,14 @@ e - exit
                     break
                 else:
                     print("Passwords do not match. Please retry.")
+        # Catch unauthorized user
         else:
-            print("You are not authorized. Please request an admin to perform this action.") 
+            print("You are not authorized. Please request an admin to perform this action.")
 
     # Add a new task
     elif menu == 'a':
-        
         print("Please enter the following task information: ")
+        
         assigned_user = input("User assigned to task: ")
         task_title = input("Title of task: ")
         description = input("Description of the task: \n")
@@ -87,10 +91,10 @@ e - exit
 
         with open("tasks.txt", "a", encoding="utf-8") as file:
             file.write(f"\n{assigned_user}, {task_title}, {description}, {today}, {due_date}, {complete}")
-    
+
     # View all tasks
     elif menu == 'va':
-    
+
         with open("tasks.txt", "r", encoding="utf-8") as file:
             for line in file:
                 one_task = line.strip()
@@ -106,13 +110,13 @@ Task description: \t{one_task[2]}
 
     # View tasks assigned to current user
     elif menu == 'vm':
-        print(f"\nAll tasks assigned to {user_name}: ")
-        
+        print(f"\nAll tasks assigned to {USER_NAME}: ")
+ 
         with open("tasks.txt", "r", encoding="utf-8") as file:
             for line in file:
                 one_task = line.strip()
                 one_task = one_task.split(", ")
-                if user_name == one_task[0]:
+                if USER_NAME == one_task[0]:
                     print(f'''\n
 Task:             \t{one_task[1]}
 Assigned to:      \t{one_task[0]}
@@ -122,7 +126,7 @@ Task complete?    \t{one_task[5]}
 Task description: \t{one_task[2]}
 ''')
 
-
+    # Statistics menu for admin user only:
     elif menu == 's':
         task_num = 0
 
@@ -130,12 +134,14 @@ Task description: \t{one_task[2]}
 
             for line in file:
                 task_num += 1
+                one_task = line.strip()
+                one_task = one_task.split(", ")
 
         print(f'''\n
-Total number of tasks: \t{task_num}
-Total number of users: \t{len(usernames)}''')
-
-
+Total number of tasks:        \t{task_num}
+Total number of users:        \t{len(usernames)}
+''')
+ 
     elif menu == 'e':
         print('Goodbye!!!')
         exit()
