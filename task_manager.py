@@ -129,13 +129,13 @@ Task description: \t{one_task[2]}
     # Statistics menu for admin user only:
     elif menu == 's':
         task_num = 0
+        # Because I'm using the length of usersnames list, it must be recalculated at login if users were added.
+        print("Please note, if you added a new user on this session, please log off and back on to refresh statistics.")
 
         with open("tasks.txt", "r", encoding = "utf-8") as file:
 
             for line in file:
                 task_num += 1
-                one_task = line.strip()
-                one_task = one_task.split(", ")
 
         print(f'''\n
 Total number of tasks:        \t{task_num}
