@@ -56,7 +56,7 @@ e - exit
 : ''').lower()
 
     # Register a new user
-    if menu == 'r':
+    if menu == "r":
 
         if USER_NAME == "admin":    # Only valid if user is admin
             print("Enter credentials of new user:")
@@ -77,7 +77,7 @@ e - exit
             print("You are not authorized. Please request an admin to perform this action.")
 
     # Add a new task
-    elif menu == 'a':
+    elif menu == "a":
         print("Please enter the following task information: ")
 
         assigned_user = input("User assigned to task: ")
@@ -93,7 +93,7 @@ e - exit
             file.write(f"\n{assigned_user}, {task_title}, {description}, {today}, {due_date}, {complete}")
 
     # View all tasks
-    elif menu == 'va':
+    elif menu == "va":
 
         with open("tasks.txt", "r", encoding="utf-8") as file:
             for line in file:
@@ -109,7 +109,7 @@ Task description: \t{one_task[2]}
 ''')
 
     # View tasks assigned to current user
-    elif menu == 'vm':
+    elif menu == "vm":
         print(f"\nAll tasks assigned to {USER_NAME}: ")
 
         with open("tasks.txt", "r", encoding="utf-8") as file:
@@ -127,7 +127,7 @@ Task description: \t{one_task[2]}
 ''')
 
     # Statistics menu for admin user only:
-    elif menu == 's':
+    elif menu == "s":
         task_num = 0
         # Because I'm using the length of usersnames list, it must be recalculated at login if users were added.
         print("Please note, if you added a new user on this session, please log off and back on to refresh statistics.")
@@ -142,8 +142,8 @@ Total number of tasks:        \t{task_num}
 Total number of users:        \t{len(usernames)}
 ''')
 
-    elif menu == 'e':
-        print('Goodbye!!!')
+    elif menu == "e":
+        print("Goodbye!!!")
         exit()
 
     else:
