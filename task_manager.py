@@ -11,7 +11,6 @@ with open("user.txt", "r", encoding = "utf-8") as file:
     for line in file:
         single_line = line.strip()
         single_line = single_line.split(", ")
-
         usernames.append(single_line[0])
         passwords.append(single_line[1])
 
@@ -35,7 +34,6 @@ while True:
 while True:
     # Present the menu to the user and 
     # make sure that the user input is converted to lower case.
-
     # Check if user is admin for special s option:
     if USER_NAME == "admin":
         menu = input('''\nSelect one of the following options:
@@ -66,7 +64,6 @@ e - exit
                 repeat_pass = input("Confirm password: ")
 
                 if new_pass == repeat_pass:
-
                     with open("user.txt", "a", encoding = "utf-8") as file:
                         file.write(f"\n{new_user}, {new_pass}")
                     break
@@ -145,6 +142,5 @@ Total number of users:        \t{len(usernames)}
     elif menu == "e":
         print("Goodbye!!!")
         exit()
-
     else:
         print("You have entered an invalid input. Please try again")
