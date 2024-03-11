@@ -1,5 +1,5 @@
 # Import Modules
-from datetime import date
+import datetime as d
 
 # Define Functions
 
@@ -27,7 +27,44 @@ def reg_user():
         print("Passwords do not match. Please try again.")
         
     return "Registration successful."
-   
+
+def add_task():
+    print("Please enter the following task information: ")
+
+    while True:
+        assigned_user = input("User assigned to task: ")
+        if assigned_user in users_info:
+            break
+        print("User not registered.")
+
+    task_title = input("Title of task: ")
+    description = input("Description of the task: \n")
+    
+    while True:
+        try:
+            due_date = input("Task due date (YYYY-MM-DD): ")
+            current_date = d.datetime.today()
+        #YYYY-MM-DD
+            today = current_date.strftime("%Y-%m-%d")
+
+            due_date_obj = d.datetime.strptime(due_date, "%Y-%m-%d")
+            if due_date_obj > current_date:
+                break
+            print("Error, the due date cannot be in the past!")
+        except ValueError:
+            print("Please enter a valid date.")      
+    complete = "No"
+
+    with open("tasks.txt", "a", encoding="utf-8") as file:
+        file.write(f"\n{assigned_user}, "
+                f"{task_title}, "
+                f"{description}, "
+                f"{today}, "
+                f"{due_date}, "
+                f"{complete}"
+                )
+    return "Task added successfully"
+
 # Login section
 
 # Read user.txt and add all info to dictionary as username:password key-values
@@ -40,7 +77,7 @@ with open("user.txt", "r", encoding = "utf-8") as file:
         single_line = single_line.split(", ")
         users_info[single_line[0]] = single_line[1]
 
-print(users_info)
+#print(users_info)
 
 
 while True:
@@ -58,7 +95,7 @@ while True:
             print("Invalid password. Try again")
     else: 
         print("Invalid username. Try again.")
-        
+
 # #====Menu Section====
 # # Repeat menu presentation with while loop
 # while True:
@@ -76,7 +113,6 @@ while True:
 # : ''').lower()
 #     else:
 #         menu = input('''Select one of the following options:
-# r - register a user
 # a - add task
 # va - view all tasks
 # vm - view my tasks
@@ -87,37 +123,15 @@ while True:
 #     if menu == "r":
 
 #         if USER_NAME == "admin":    # Only valid if user is admin
-
-#             while True:
-#                 new_pass = input("Password: ")
-#                 repeat_pass = input("Confirm password: ")
-
-#                 if new_pass == repeat_pass:
-#                     with open("user.txt", "a", encoding = "utf-8") as file:
-#                         file.write(f"\n{new_user}, {new_pass}")
-#                     break
-#                 else:
-#                     print("Passwords do not match. Please retry.")
+#           print(reg_user())
+#           
 #         # Catch unauthorized user
 #         else:
 #             print("You are not authorized. Please request an admin to perform this action.")
 
 #     # Add a new task
 #     elif menu == "a":
-#         print("Please enter the following task information: ")
-
-#         assigned_user = input("User assigned to task: ")
-#         task_title = input("Title of task: ")
-#         description = input("Description of the task: \n")
-#         due_date = input("Task due date (eg 12 Jan 2024): ")
-#         current_date = date.today()
-#         # Convert current date to same format in tasks.txt
-#         today = current_date.strftime("%d %b %Y")
-#         complete = "No"
-
-#         with open("tasks.txt", "a", encoding="utf-8") as file:
-#             file.write(f"\n{assigned_user}, {task_title}, {description}, {today}, {due_date}, {complete}")
-
+#           print(add_task())
 #     # View all tasks
 #     elif menu == "va":
 
