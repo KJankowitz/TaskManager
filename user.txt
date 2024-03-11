@@ -1,1 +1,6 @@
 admin, adm1n
+John, j0hn
+Frik, fr1k
+Sam, s5m
+Tom, t0m
+Yeet, y33t
