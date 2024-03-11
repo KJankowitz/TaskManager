@@ -1,7 +1,9 @@
-#=====importing libraries===========
+# Import Modules
 from datetime import date
 
-#====Login Section====
+# Define Functions
+
+# Login section
 
 usernames = []
 passwords = []
