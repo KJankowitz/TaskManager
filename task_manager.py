@@ -65,6 +65,20 @@ def add_task():
                 )
     return "Task added successfully"
 
+def view_all():
+    with open("tasks.txt", "r", encoding="utf-8") as file:
+                for line in file:
+                    one_task = line.strip()
+                    one_task = one_task.split(", ")
+                    print(f'''\n
+    Task:             \t{one_task[1]}
+    Assigned to:      \t{one_task[0]}
+    Date assigned:    \t{one_task[3]}
+    Due date:         \t{one_task[4]}
+    Task complete?    \t{one_task[5]}
+    Task description: \t{one_task[2]}
+    ''')
+
 # Login section
 
 # Read user.txt and add all info to dictionary as username:password key-values
@@ -135,18 +149,7 @@ while True:
 #     # View all tasks
 #     elif menu == "va":
 
-#         with open("tasks.txt", "r", encoding="utf-8") as file:
-#             for line in file:
-#                 one_task = line.strip()
-#                 one_task = one_task.split(", ")
-#                 print(f'''\n
-# Task:             \t{one_task[1]}
-# Assigned to:      \t{one_task[0]}
-# Date assigned:    \t{one_task[3]}
-# Due date:         \t{one_task[4]}
-# Task complete?    \t{one_task[5]}
-# Task description: \t{one_task[2]}
-# ''')
+#         view_all()
 
 #     # View tasks assigned to current user
 #     elif menu == "vm":
