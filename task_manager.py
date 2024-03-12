@@ -78,6 +78,22 @@ def view_all():
     Task complete?    \t{one_task[5]}
     Task description: \t{one_task[2]}
     ''')
+                    
+def view_mine(user):
+    with open("tasks.txt", "r", encoding="utf-8") as file:
+                for line in file:
+                    one_task = line.strip()
+                    one_task = one_task.split(", ")
+                    if user == one_task[0]:
+                    print(f'''\n
+    Task:             \t{one_task[1]}
+    Assigned to:      \t{one_task[0]}
+    Date assigned:    \t{one_task[3]}
+    Due date:         \t{one_task[4]}
+    Task complete?    \t{one_task[5]}
+    Task description: \t{one_task[2]}
+    ''')
+
 
 # Login section
 
@@ -155,20 +171,8 @@ while True:
 #     elif menu == "vm":
 #         print(f"\nAll tasks assigned to {USER_NAME}: ")
 
-#         with open("tasks.txt", "r", encoding="utf-8") as file:
-#             for line in file:
-#                 one_task = line.strip()
-#                 one_task = one_task.split(", ")
-#                 if USER_NAME == one_task[0]:
-#                     print(f'''\n
-# Task:             \t{one_task[1]}
-# Assigned to:      \t{one_task[0]}
-# Date assigned:    \t{one_task[3]}
-# Due date:         \t{one_task[4]}
-# Task complete?    \t{one_task[5]}
-# Task description: \t{one_task[2]}
-# ''')
-
+#        view_mine(USER_NAME)
+        
 #     # Statistics menu for admin user only:
 #     elif menu == "s":
 #         task_num = 0
