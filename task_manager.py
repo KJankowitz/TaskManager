@@ -1,8 +1,17 @@
-# Import Modules
+# --- Import Modules ---
 import datetime as d
+import json 
 
-# Define Functions
+# --- Note ---
+# For this project, I decided to work with the data from the text files as 
+# dictionaries. However, when I got to the later parts of having to edit tasks
+# and write back to the text files, things got a little complicated.
+# I hope my comments make sense and that leaving the text file in json format
+# is okay. I feel like I bit off a little more than I could chew so I am looking  
+# forward your feedback and advice for the future :)
 
+# --- Define Functions ---
+ALL_TASKS = []
 def reg_user():
     '''
     This function asks user to input new credentials to be registered as
@@ -28,7 +37,51 @@ def reg_user():
         
     return "Registration successful."
 
+def dict_tasks():
+    '''
+    This function reads any existing task text file and saves the text 
+    content of the tasks in dictionary format for easy manipulation. Appends to
+    ALL_TASKS list.
+    '''
+    with open("test1.txt", "r", encoding="utf-8") as file:
+        for line in file:
+            one_task = line.strip()
+            one_task = one_task.split(", ")
+            one_dict = {
+                "Task": one_task[1],
+                "Assigned to": one_task[0],
+                "Date assigned": one_task[3],
+                "Due date":one_task[4],
+                "Task complete?":one_task[5],
+                "Task description":one_task[2]
+            }
+            if one_dict not in ALL_TASKS:
+                ALL_TASKS.append(one_dict)
+
+def write_tasks():
+    '''
+    Writes the content of ALL_TASKS back to text file as dictionary objects
+    '''
+    with open("test1.txt", "w", encoding="utf-8") as f_out:
+        for task in ALL_TASKS:
+            json.dump(task, f_out)
+            f_out.write("\n")
+
+def read_tasks():
+    '''
+    Read all tasks from text file in json format to append to ALL_TASKS list
+    '''
+    with open("test1.txt", "r", encoding="utf-8") as test_file:
+        for line in test_file:
+            one_task = json.loads(line)
+            if one_task not in ALL_TASKS:
+                ALL_TASKS.append(one_task)
+
 def add_task():
+    '''
+    This function will add a new task with input details from the user to
+    the external text file in the form of a dictionary or json object
+    '''
     print("Please enter the following task information: ")
 
     while True:
@@ -39,12 +92,13 @@ def add_task():
 
     task_title = input("Title of task: ")
     description = input("Description of the task: \n")
-    
+    complete = "No" 
+
     while True:
         try:
             due_date = input("Task due date (YYYY-MM-DD): ")
             current_date = d.datetime.today()
-        #YYYY-MM-DD
+            #YYYY-MM-DD
             today = current_date.strftime("%Y-%m-%d")
 
             due_date_obj = d.datetime.strptime(due_date, "%Y-%m-%d")
@@ -53,48 +107,42 @@ def add_task():
             print("Error, the due date cannot be in the past!")
         except ValueError:
             print("Please enter a valid date.")      
-    complete = "No"
-
-    with open("tasks.txt", "a", encoding="utf-8") as file:
-        file.write(f"\n{assigned_user}, "
-                f"{task_title}, "
-                f"{description}, "
-                f"{today}, "
-                f"{due_date}, "
-                f"{complete}"
-                )
+       
+    with open("test.txt", "a", encoding="utf-8") as file:
+        new_task = {
+            "Task": task_title,
+            "Assigned to": assigned_user,
+            "Date assigned": today,
+            "Due date":due_date,
+            "Task complete?":complete,
+            "Task description":description
+            }
+        json.dump(new_task, file)
+        file.write("\n")
+            
     return "Task added successfully"
 
 def view_all():
-    with open("tasks.txt", "r", encoding="utf-8") as file:
-                for line in file:
-                    one_task = line.strip()
-                    one_task = one_task.split(", ")
-                    print(f'''\n
-    Task:             \t{one_task[1]}
-    Assigned to:      \t{one_task[0]}
-    Date assigned:    \t{one_task[3]}
-    Due date:         \t{one_task[4]}
-    Task complete?    \t{one_task[5]}
-    Task description: \t{one_task[2]}
-    ''')
+    '''
+    Print out all tasks currently in file in readable dictionary format
+    '''
+    read_tasks()
+    for task in ALL_TASKS:
+        for key, value in task.items():
+            print(f"{key} : {value}")
+        print("\n")
                     
 def view_mine(user):
-    with open("tasks.txt", "r", encoding="utf-8") as file:
-                for line in file:
-                    one_task = line.strip()
-                    one_task = one_task.split(", ")
-                    if user == one_task[0]:
-                    print(f'''\n
-    Task:             \t{one_task[1]}
-    Assigned to:      \t{one_task[0]}
-    Date assigned:    \t{one_task[3]}
-    Due date:         \t{one_task[4]}
-    Task complete?    \t{one_task[5]}
-    Task description: \t{one_task[2]}
-    ''')
-
-
+    '''
+    Returns a list of tasks assigned to current logged-on user in dictionary 
+    format. 
+    '''
+    my_tasks = []
+    read_tasks()
+    for a_task in ALL_TASKS:
+        if user == a_task["Assigned to"]:
+            my_tasks.append(a_task)
+    return my_tasks
 # Login section
 
 # Read user.txt and add all info to dictionary as username:password key-values
@@ -171,7 +219,10 @@ while True:
 #     elif menu == "vm":
 #         print(f"\nAll tasks assigned to {USER_NAME}: ")
 
-#        view_mine(USER_NAME)
+#        for count, task in enumerate(view_mine(USER_NAME), 1):
+#           print(f"\n{count}")
+#           for key, value in task.items():
+#               print(f"{key} : {value}")
         
 #     # Statistics menu for admin user only:
 #     elif menu == "s":
