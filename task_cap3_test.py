@@ -1,5 +1,6 @@
 # View Mine
 import json
+import datetime as d
 
 ALL_TASKS = []
 # Turn all Tasks into dict format
@@ -35,21 +36,6 @@ def view_mine(user):
     return my_tasks
 
 
-    
-
-def edit_task(number, action, user):
-    task_list = view_mine(user)
-    if action == "c":
-        task_list[number - 1]["Task complete?"] = "Yes"
-    elif action == "au":
-        new_au = input("Enter the new user assigned to this task:\n")
-
-    
-    for entry in task_list:
-        if entry not in ALL_TASKS:
-            ALL_TASKS.append(entry)
-
-
 def write_tasks():
     with open("test1.txt", "w", encoding="utf-8") as f_out:
         for task in ALL_TASKS:
@@ -63,9 +49,57 @@ for count, task in enumerate(view_mine(user), 1):
     for key, value in task.items():
         print(f"{key} : {value}")
 
-number = int(input('''
+
+def date_valid(due_date):
+    try:
+        current_date = d.datetime.today()
+        #YYYY-MM-DD
+        today = current_date.strftime("%Y-%m-%d")
+
+        due_date_obj = d.datetime.strptime(due_date, "%Y-%m-%d")
+        if due_date_obj < current_date:
+            print("Error, the due date cannot be in the past!")
+        else:
+            return True
+    except ValueError:
+        print("Please enter a valid date.")
+
+users_info = {
+    "admin": "adm1n",
+    "John": "j0hn",
+    "Frik": "fr1k"
+}
+
+def edit_task(number, action, user):
+    task_list = view_mine(user)
+    if action == "c":
+        task_list[number - 1]["Task complete?"] = "Yes"
+    elif action == "au":
+    
+        while True:
+            new_au = input("Enter the new user assigned to this task:\n")
+            if new_au in users_info:
+                break
+            print("Username does not exist. Please check spelling or add user first.")
+        task_list[number - 1]["Assigned to"] = new_au
+    elif action == "dd":
+        while True:
+            new_date = input("Please enter new due date (YYYY-MM-DD):\n")
+            if date_valid(new_date):
+                break
+        task_list[number - 1]["Due date"] = new_date
+                
+    for entry in task_list:
+        if entry not in ALL_TASKS:
+            ALL_TASKS.append(entry)
+
+
+
+option = int(input('''
 Select number of task you wish to edit, 
 or enter -1 to return to main menu: '''))
+if option == -1:
+    print("exit to main menu")
 action = input('''
 Type:
     c - mark task as complete
@@ -73,9 +107,5 @@ Type:
     dd - change task due date
 ''').lower()
 
-
-if number == -1:
-    print("exit to main menu")
-
-edit_task(number, action, user)
+edit_task(option, action, user)
 write_tasks()

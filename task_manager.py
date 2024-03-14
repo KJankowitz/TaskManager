@@ -77,6 +77,24 @@ def read_tasks():
             if one_task not in ALL_TASKS:
                 ALL_TASKS.append(one_task)
 
+def date_valid(due_date):
+    '''
+    Takes date input (YYYY-MM-DD) and returns true if it is valid and not in 
+    the past.
+    '''
+    try:
+        current_date = d.datetime.today()
+        #YYYY-MM-DD
+        today = current_date.strftime("%Y-%m-%d")
+
+        due_date_obj = d.datetime.strptime(due_date, "%Y-%m-%d")
+        if due_date_obj < current_date:
+            print("Error, the due date cannot be in the past!")
+        else:
+            return True
+    except ValueError:
+        print("Please enter a valid date.")
+
 def add_task():
     '''
     This function will add a new task with input details from the user to
@@ -95,25 +113,17 @@ def add_task():
     complete = "No" 
 
     while True:
-        try:
-            due_date = input("Task due date (YYYY-MM-DD): ")
-            current_date = d.datetime.today()
-            #YYYY-MM-DD
-            today = current_date.strftime("%Y-%m-%d")
+        d_date = input("Task due date (YYYY-MM-DD): ")
+        if date_valid(d_date):
+            break  
+    current_date = d.datetime.today().strftime("%Y-%m-%d")
 
-            due_date_obj = d.datetime.strptime(due_date, "%Y-%m-%d")
-            if due_date_obj > current_date:
-                break
-            print("Error, the due date cannot be in the past!")
-        except ValueError:
-            print("Please enter a valid date.")      
-       
     with open("test.txt", "a", encoding="utf-8") as file:
         new_task = {
             "Task": task_title,
             "Assigned to": assigned_user,
-            "Date assigned": today,
-            "Due date":due_date,
+            "Date assigned": current_date,
+            "Due date":d_date,
             "Task complete?":complete,
             "Task description":description
             }
@@ -143,6 +153,35 @@ def view_mine(user):
         if user == a_task["Assigned to"]:
             my_tasks.append(a_task)
     return my_tasks
+
+def edit_task(number, action, user):
+    '''
+    Takes input number of task, action to perform and current logged-on user to
+    edit task info, such as user assigned, completed or due date. Appends changed
+    data back to ALL_TASKS dict list.
+    '''
+    task_list = view_mine(user)
+    if action == "c":
+        task_list[number - 1]["Task complete?"] = "Yes"
+    elif action == "au":
+    
+        while True:
+            new_au = input("Enter the new user assigned to this task:\n")
+            if new_au in users_info:
+                break
+            print("Username does not exist. Please check spelling or add user first.")
+        task_list[number - 1]["Assigned to"] = new_au
+    elif action == "dd":
+        while True:
+            new_date = input("Please enter new due date (YYYY-MM-DD):\n")
+            if date_valid(new_date):
+                break
+        task_list[number - 1]["Due date"] = new_date
+                
+    for entry in task_list:
+        if entry not in ALL_TASKS:
+            ALL_TASKS.append(entry)
+
 # Login section
 
 # Read user.txt and add all info to dictionary as username:password key-values
@@ -223,6 +262,23 @@ while True:
 #           print(f"\n{count}")
 #           for key, value in task.items():
 #               print(f"{key} : {value}")
+        
+#         edit = input("Do you want to edit tasks? Enter 'y' or 'n':\n").lower()
+#         if edit == "y":
+#             option = int(input('''
+# Select number of task you wish to edit, 
+# or enter -1 to return to main menu: '''))
+#             if option == -1:
+#                 print("exit to main menu")
+#             action = input('''
+# Type:
+#     c - mark task as complete
+#     au - change assigned user
+#     dd - change task due date
+# ''').lower()
+
+#             edit_task(option, action, USER_NAME)
+#             write_tasks()
         
 #     # Statistics menu for admin user only:
 #     elif menu == "s":
