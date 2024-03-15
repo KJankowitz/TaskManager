@@ -1,13 +1,13 @@
 # --- Import Modules ---
 import datetime as d
-import json 
+import json
 
 # --- Note ---
-# For this project, I decided to work with the data from the text files as 
+# For this project, I decided to work with the data from the text files as
 # dictionaries. However, when I got to the later parts of having to edit tasks
 # and write back to the text files, things got a little complicated.
 # I hope my comments make sense and that leaving the text file in json format
-# is okay. I feel like I bit off a little more than I could chew so I am looking  
+# is okay. I feel like I bit off a little more than I could chew so I am looking
 # forward your feedback and advice for the future :)
 
 # --- Define Functions ---
@@ -24,17 +24,17 @@ def reg_user():
         if new_user not in users_info:
             break
         print("Username already exists. Please use another.")
-    
+
     while True:
         new_pass = input("Enter new password:\n")
         repeat_pass = input("Confirm password: ")
 
         if new_pass == repeat_pass:
-            with open("19 Cap2/user.txt", "a", encoding = "utf-8") as file:
-                file.write(f"\n{new_user}, {new_pass}")
+            with open("user.txt", "a", encoding = "utf-8") as u_file:
+                u_file.write(f"\n{new_user}, {new_pass}")
             break
         print("Passwords do not match. Please try again.")
-        
+
     return "Registration successful."
 
 def dict_tasks():
@@ -43,9 +43,9 @@ def dict_tasks():
     content of the tasks in dictionary format for easy manipulation. Appends to
     ALL_TASKS list.
     '''
-    with open("test1.txt", "r", encoding="utf-8") as file:
-        for line in file:
-            one_task = line.strip()
+    with open("test1.txt", "r", encoding="utf-8") as t_file:
+        for task_line in t_file:
+            one_task = task_line.strip()
             one_task = one_task.split(", ")
             one_dict = {
                 "Task": one_task[1],
@@ -110,12 +110,12 @@ def add_task():
 
     task_title = input("Title of task: ")
     description = input("Description of the task: \n")
-    complete = "No" 
+    complete = "No"
 
     while True:
         d_date = input("Task due date (YYYY-MM-DD): ")
         if date_valid(d_date):
-            break  
+            break
     current_date = d.datetime.today().strftime("%Y-%m-%d")
 
     with open("test.txt", "a", encoding="utf-8") as file:
@@ -129,7 +129,7 @@ def add_task():
             }
         json.dump(new_task, file)
         file.write("\n")
-            
+
     return "Task added successfully"
 
 def view_all():
@@ -141,7 +141,7 @@ def view_all():
         for key, value in task.items():
             print(f"{key} : {value}")
         print("\n")
-                    
+
 def view_mine(user):
     '''
     Returns a list of tasks assigned to current logged-on user in dictionary 
@@ -164,7 +164,7 @@ def edit_task(number, action, user):
     if action == "c":
         task_list[number - 1]["Task complete?"] = "Yes"
     elif action == "au":
-    
+
         while True:
             new_au = input("Enter the new user assigned to this task:\n")
             if new_au in users_info:
@@ -177,7 +177,7 @@ def edit_task(number, action, user):
             if date_valid(new_date):
                 break
         task_list[number - 1]["Due date"] = new_date
-                
+
     for entry in task_list:
         if entry not in ALL_TASKS:
             ALL_TASKS.append(entry)
@@ -210,13 +210,13 @@ while True:
             break
         else:
             print("Invalid password. Try again")
-    else: 
+    else:
         print("Invalid username. Try again.")
 
 # #====Menu Section====
 # # Repeat menu presentation with while loop
 # while True:
-#     # Present the menu to the user and 
+#     # Present the menu to the user and
 #     # make sure that the user input is converted to lower case.
 #     # Check if user is admin for special s option:
 #     if USER_NAME == "admin":
@@ -241,7 +241,7 @@ while True:
 
 #         if USER_NAME == "admin":    # Only valid if user is admin
 #           print(reg_user())
-#           
+
 #         # Catch unauthorized user
 #         else:
 #             print("You are not authorized. Please request an admin to perform this action.")
@@ -262,7 +262,7 @@ while True:
 #           print(f"\n{count}")
 #           for key, value in task.items():
 #               print(f"{key} : {value}")
-        
+
 #         edit = input("Do you want to edit tasks? Enter 'y' or 'n':\n").lower()
 #         if edit == "y":
 #             option = int(input('''
@@ -279,12 +279,14 @@ while True:
 
 #             edit_task(option, action, USER_NAME)
 #             write_tasks()
-        
+
 #     # Statistics menu for admin user only:
 #     elif menu == "s":
 #         task_num = 0
-#         # Because I'm using the length of usersnames list, it must be recalculated at login if users were added.
-#         print("Please note, if you added a new user on this session, please log off and back on to refresh statistics.")
+# Because I'm using the length of usersnames list, it must be recalculated at
+# login if users were added.
+#         print("Please note, if you added a new user on this session, please
+# log off and back on to refresh statistics.")
 
 #         with open("tasks.txt", "r", encoding = "utf-8") as file:
 
