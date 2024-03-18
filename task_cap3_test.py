@@ -54,7 +54,7 @@ def convert_dates():
             continue
 
         
-
+USERS_INFO = {}
 ALL_TASKS = []
 
 def check_overdue(all_tasks):
@@ -67,13 +67,25 @@ def check_overdue(all_tasks):
             overdue.append(task)
     return overdue
 
+def read_users():
+    with open("user.txt", "r", encoding = "utf-8") as file:
+        for line in file:
+            single_line = line.strip()
+            single_line = single_line.split(", ")
+            if single_line[0] not in USERS_INFO:
+                USERS_INFO[single_line[0]] = single_line[1]
+
+
+
 def generate_report():
     read_tasks()
+    read_users()
     total_tasks = len(ALL_TASKS)
     completed = 0
     for task in ALL_TASKS:
         if task["Task complete?"] == "Yes":
             completed += 1
+
 
     with open("task_overview.txt", "w", encoding="utf-8") as t_report:
         task_report = ({
@@ -86,11 +98,24 @@ def generate_report():
         })
         json.dump(task_report, t_report)
     
+    total_users = len(USERS_INFO)
+    with open("user_overview.txt", "w", encoding="utf-8") as u_report:
+        user_report = ({
+            "Total users": total_users,
+            "Total tasks": total_tasks,
+        #     "Total incomplete tasks": total_tasks - completed,
+        #     "Total overdue tasks": len(check_overdue(ALL_TASKS)),
+        #     "% incomplete":(total_tasks - completed)/ total_tasks * 100,
+        #     "% overdue": len(check_overdue(ALL_TASKS))/total_tasks * 100
+         })
+        json.dump(user_report, u_report)
+
     print("Report generated")
 
 generate_report()
 write_tasks()
-
+read_users()
+print(USERS_INFO)
 
 #with open("users_overview.txt", "w", encoding="utf-8") as u_report:
     # Total users from user_info dict
