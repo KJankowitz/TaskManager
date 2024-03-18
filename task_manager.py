@@ -77,6 +77,20 @@ def read_tasks():
             if one_task not in ALL_TASKS:
                 ALL_TASKS.append(one_task)
 
+def convert_dates():
+    '''
+    Converts any existing date formats in tasks.txt into the same usable format
+    for comparison and continuity purposes (YYYY-MM-DD)
+    '''
+    read_tasks()
+    for task in ALL_TASKS:
+        try:
+            task["Due date"] = (d.datetime.strptime(
+            task["Due date"], "%d %b %Y"
+            ).strftime("%Y-%m-%d"))
+        except ValueError:
+            continue
+
 def date_valid(due_date):
     '''
     Takes date input (YYYY-MM-DD) and returns true if it is valid and not in 
@@ -94,6 +108,20 @@ def date_valid(due_date):
             return True
     except ValueError:
         print("Please enter a valid date.")
+
+def check_overdue(all_tasks):
+    '''
+    Returns all tasks with overdue due dates in list format. Also calls 
+    convert_dates() to ensure all dates are in the same format.
+    '''
+    overdue = []
+    today = d.datetime.today()
+    convert_dates()
+    for task in all_tasks:
+        d_date_obj = d.datetime.strptime(task["Due date"], "%Y-%m-%d")
+        if d_date_obj > today:
+            overdue.append(task)
+    return overdue
 
 def add_task():
     '''
@@ -181,6 +209,31 @@ def edit_task(number, action, user):
     for entry in task_list:
         if entry not in ALL_TASKS:
             ALL_TASKS.append(entry)
+
+def generate_report():
+    '''
+    Generates task_overview.txt file (or overwrites existing) with current info
+    regarding all task statistics.
+    '''
+    read_tasks()
+    total_tasks = len(ALL_TASKS)
+    completed = 0
+    for task in ALL_TASKS:
+        if task["Task complete?"] == "Yes":
+            completed += 1
+
+    with open("task_overview.txt", "w", encoding="utf-8") as t_report:
+        task_report = ({
+            "Total tasks": total_tasks,
+            "Total completed": completed,
+            "Total incomplete tasks": total_tasks - completed,
+            "Total overdue tasks": len(check_overdue(ALL_TASKS)),
+            "% incomplete":(total_tasks - completed)/ total_tasks * 100,
+            "% overdue": len(check_overdue(ALL_TASKS))/total_tasks * 100
+        })
+        json.dump(task_report, t_report)
+    
+    print("Report generated")
 
 # Login section
 
