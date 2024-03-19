@@ -110,10 +110,8 @@ def generate_report():
     
     total_users = len(USERS_INFO)
     with open("user_overview.txt", "w", encoding="utf-8") as u_report_f:
-        report_head = ({
-            "Total users": total_users,
-            "Total tasks": total_tasks,
-            })
+        report_head = ({"Total users": total_users},{"Total tasks": total_tasks})
+        
         json.dump(report_head, u_report_f)
         u_report_f.write("\n")
 
@@ -128,19 +126,46 @@ def generate_report():
                         u_complete += 1
                 u_incomplete = u_total - u_complete
                 u_overdue = len(check_overdue(u_tasks))
-                user_report = [u, {
+                user_report = (u, {
                 "Total user tasks": u_total,
                 "% Of total tasks assigned to user": round((u_total/total_tasks * 100), 2),
                 "% Tasks completed by user": round((u_complete/u_total * 100), 2),
                 "% User tasks incomplete": round((u_incomplete/u_total * 100), 2),
                 "% User tasks incomplete and overdue": round((u_overdue/u_total * 100), 2)
-                }]
+                })
             else:
-                user_report = [u, "This user has no tasks assigned"]
+                user_report = u, "This user has no tasks assigned"
             
             json.dump(user_report, u_report_f)
             u_report_f.write("\n")
     print("Report generated")
 
-generate_report()
-#write_tasks()
+def gen_task_stats():
+    while True:
+        try:
+            with open("task_overview.txt", "r", encoding="utf-8") as t_file:
+                file_data = json.load(t_file)
+            print("Task Overview:\n")
+            for line in file_data:
+                print(f"{line} : {file_data[line]}")
+            break
+        except FileNotFoundError:
+            generate_report()
+
+
+# def gen_user_stats():
+#     while True:
+#         try:
+#             with open("user_overview.txt", "r", encoding="utf-8") as u_file:
+#                 for line in u_file:
+#                     n_line = line.strip()
+#                     dicts = json.loads(n_line[1])
+#                     print(f"{n_line[0]}\n{dicts}")
+#             break
+#         except FileNotFoundError:
+#             generate_report()
+
+
+#generate_report()
+
+# gen_user_stats()
