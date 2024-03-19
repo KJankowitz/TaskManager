@@ -75,6 +75,17 @@ def read_users():
             if single_line[0] not in USERS_INFO:
                 USERS_INFO[single_line[0]] = single_line[1]
 
+def view_mine(user):
+    '''
+    Returns a list of tasks assigned to current logged-on user in dictionary 
+    format. 
+    '''
+    my_tasks = []
+    read_tasks()
+    for a_task in ALL_TASKS:
+        if user == a_task["Assigned to"]:
+            my_tasks.append(a_task)
+    return my_tasks
 
 
 def generate_report():
@@ -100,13 +111,16 @@ def generate_report():
     
     total_users = len(USERS_INFO)
     with open("user_overview.txt", "w", encoding="utf-8") as u_report:
+        for u in USERS_INFO:
+            u_total = len(view_mine(u))
+            u_complete = 0
+            #for u_task in u_total:
+
         user_report = ({
             "Total users": total_users,
             "Total tasks": total_tasks,
-        #     "Total incomplete tasks": total_tasks - completed,
-        #     "Total overdue tasks": len(check_overdue(ALL_TASKS)),
-        #     "% incomplete":(total_tasks - completed)/ total_tasks * 100,
-        #     "% overdue": len(check_overdue(ALL_TASKS))/total_tasks * 100
+        #     user: [total tasks, complete, incomplete, %, overdue]
+        #     "
          })
         json.dump(user_report, u_report)
 
