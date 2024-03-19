@@ -1,0 +1,7 @@
+{"Total users": 6, "Total tasks": 6}
+["admin", {"Total user tasks": 3, "% Of total tasks assigned to user": 50.0, "% Tasks completed by user": 0.0, "% User tasks incomplete": 100.0, "% User tasks incomplete and overdue": 33.33}]
+["John", "This user has no tasks assigned"]
+["Frik", {"Total user tasks": 1, "% Of total tasks assigned to user": 16.67, "% Tasks completed by user": 0.0, "% User tasks incomplete": 100.0, "% User tasks incomplete and overdue": 100.0}]
+["Sam", "This user has no tasks assigned"]
+["Tom", {"Total user tasks": 2, "% Of total tasks assigned to user": 33.33, "% Tasks completed by user": 0.0, "% User tasks incomplete": 100.0, "% User tasks incomplete and overdue": 50.0}]
+["Yeet", "This user has no tasks assigned"]

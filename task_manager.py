@@ -1,17 +1,20 @@
-# --- Import Modules ---
+# === Import Modules ===
 import datetime as d
 import json
 
-# --- Note ---
+# === Note ===
 # For this project, I decided to work with the data from the text files as
 # dictionaries. However, when I got to the later parts of having to edit tasks
 # and write back to the text files, things got a little complicated.
 # I hope my comments make sense and that leaving the text file in json format
-# is okay. I feel like I bit off a little more than I could chew so I am looking
+# is okay. Although I feel like I bit off a little more than I could chew, I
+# really wanted to try to work it out independantly, so I am looking
 # forward your feedback and advice for the future :)
 
-# --- Define Functions ---
+# === Define Functions ===
 ALL_TASKS = []
+USERS_INFO = {}
+
 def reg_user():
     '''
     This function asks user to input new credentials to be registered as
@@ -77,6 +80,14 @@ def read_tasks():
             if one_task not in ALL_TASKS:
                 ALL_TASKS.append(one_task)
 
+def read_users():
+    with open("user.txt", "r", encoding = "utf-8") as file:
+        for line in file:
+            single_line = line.strip()
+            single_line = single_line.split(", ")
+            if single_line[0] not in USERS_INFO:
+                USERS_INFO[single_line[0]] = single_line[1]
+
 def convert_dates():
     '''
     Converts any existing date formats in tasks.txt into the same usable format
@@ -132,7 +143,7 @@ def add_task():
 
     while True:
         assigned_user = input("User assigned to task: ")
-        if assigned_user in users_info:
+        if assigned_user in USERS_INFO:
             break
         print("User not registered.")
 
@@ -195,7 +206,7 @@ def edit_task(number, action, user):
 
         while True:
             new_au = input("Enter the new user assigned to this task:\n")
-            if new_au in users_info:
+            if new_au in USERS_INFO:
                 break
             print("Username does not exist. Please check spelling or add user first.")
         task_list[number - 1]["Assigned to"] = new_au
@@ -210,45 +221,70 @@ def edit_task(number, action, user):
         if entry not in ALL_TASKS:
             ALL_TASKS.append(entry)
 
-def generate_report():
+def generate_reports():
     '''
-    Generates task_overview.txt file (or overwrites existing) with current info
-    regarding all task statistics.
+    Generates task_overview.txt and user_overview.txt files (or overwrites 
+    existing) with current info regarding all task statistics.
     '''
     read_tasks()
+    read_users()
     total_tasks = len(ALL_TASKS)
     completed = 0
     for task in ALL_TASKS:
         if task["Task complete?"] == "Yes":
             completed += 1
 
-    with open("task_overview.txt", "w", encoding="utf-8") as t_report:
+    with open("task_overview.txt", "w", encoding="utf-8") as t_report_f:
         task_report = ({
             "Total tasks": total_tasks,
             "Total completed": completed,
             "Total incomplete tasks": total_tasks - completed,
             "Total overdue tasks": len(check_overdue(ALL_TASKS)),
-            "% incomplete":(total_tasks - completed)/ total_tasks * 100,
-            "% overdue": len(check_overdue(ALL_TASKS))/total_tasks * 100
+            "% incomplete":round((total_tasks - completed)/ total_tasks * 100, 2),
+            "% overdue": round(len(check_overdue(ALL_TASKS))/total_tasks * 100, 2)
         })
-        json.dump(task_report, t_report)
+        json.dump(task_report, t_report_f)
     
+    total_users = len(USERS_INFO)
+    with open("user_overview.txt", "w", encoding="utf-8") as u_report_f:
+        report_head = ({
+            "Total users": total_users,
+            "Total tasks": total_tasks,
+            })
+        json.dump(report_head, u_report_f)
+        u_report_f.write("\n")
+
+        for u in USERS_INFO:
+            u_tasks = view_mine(u)
+            u_total = len(u_tasks)
+            if u_total !=0:
+                u_complete = 0
+        
+                for u_task in u_tasks:
+                    if u_task["Task complete?"] == "Yes":
+                        u_complete += 1
+                u_incomplete = u_total - u_complete
+                u_overdue = len(check_overdue(u_tasks))
+                user_report = [u, {
+                "Total user tasks": u_total,
+                "% Of total tasks assigned to user": round((u_total/total_tasks * 100), 2),
+                "% Tasks completed by user": round((u_complete/u_total * 100), 2),
+                "% User tasks incomplete": round((u_incomplete/u_total * 100), 2),
+                "% User tasks incomplete and overdue": round((u_overdue/u_total * 100), 2)
+                }]
+            else:
+                user_report = [u, "This user has no tasks assigned"]
+            
+            json.dump(user_report, u_report_f)
+            u_report_f.write("\n")
     print("Report generated")
 
-# Login section
+
+# === Program Code ===
+# --- Login section ---
 
 # Read user.txt and add all info to dictionary as username:password key-values
-users_info = {}
-
-with open("user.txt", "r", encoding = "utf-8") as file:
-
-    for line in file:
-        single_line = line.strip()
-        single_line = single_line.split(", ")
-        users_info[single_line[0]] = single_line[1]
-
-#print(users_info)
-
+read_users()
 
 while True:
     print("Welcome to the TaskManager program! Please enter login details:")
@@ -256,17 +292,15 @@ while True:
     pass_word = input("Password: ")
 
 # Check for valid username, then valid password
-
-    if USER_NAME in users_info:
-        if pass_word == users_info[USER_NAME]:
+    if USER_NAME in USERS_INFO:
+        if pass_word == USERS_INFO[USER_NAME]:
             print("Login successful.")
             break
-        else:
-            print("Invalid password. Try again")
+        print("Invalid password. Try again")
     else:
         print("Invalid username. Try again.")
 
-# #====Menu Section====
+# --- Menu Section ---
 # # Repeat menu presentation with while loop
 # while True:
 #     # Present the menu to the user and

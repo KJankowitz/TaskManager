@@ -97,43 +97,50 @@ def generate_report():
         if task["Task complete?"] == "Yes":
             completed += 1
 
-
-    with open("task_overview.txt", "w", encoding="utf-8") as t_report:
+    with open("task_overview.txt", "w", encoding="utf-8") as t_report_f:
         task_report = ({
             "Total tasks": total_tasks,
             "Total completed": completed,
             "Total incomplete tasks": total_tasks - completed,
             "Total overdue tasks": len(check_overdue(ALL_TASKS)),
-            "% incomplete":(total_tasks - completed)/ total_tasks * 100,
-            "% overdue": len(check_overdue(ALL_TASKS))/total_tasks * 100
+            "% incomplete":round((total_tasks - completed)/ total_tasks * 100, 2),
+            "% overdue": round(len(check_overdue(ALL_TASKS))/total_tasks * 100, 2)
         })
-        json.dump(task_report, t_report)
+        json.dump(task_report, t_report_f)
     
     total_users = len(USERS_INFO)
-    with open("user_overview.txt", "w", encoding="utf-8") as u_report:
-        for u in USERS_INFO:
-            u_total = len(view_mine(u))
-            u_complete = 0
-            #for u_task in u_total:
-
-        user_report = ({
+    with open("user_overview.txt", "w", encoding="utf-8") as u_report_f:
+        report_head = ({
             "Total users": total_users,
             "Total tasks": total_tasks,
-        #     user: [total tasks, complete, incomplete, %, overdue]
-        #     "
-         })
-        json.dump(user_report, u_report)
+            })
+        json.dump(report_head, u_report_f)
+        u_report_f.write("\n")
 
+        for u in USERS_INFO:
+            u_tasks = view_mine(u)
+            u_total = len(u_tasks)
+            if u_total !=0:
+                u_complete = 0
+        
+                for u_task in u_tasks:
+                    if u_task["Task complete?"] == "Yes":
+                        u_complete += 1
+                u_incomplete = u_total - u_complete
+                u_overdue = len(check_overdue(u_tasks))
+                user_report = [u, {
+                "Total user tasks": u_total,
+                "% Of total tasks assigned to user": round((u_total/total_tasks * 100), 2),
+                "% Tasks completed by user": round((u_complete/u_total * 100), 2),
+                "% User tasks incomplete": round((u_incomplete/u_total * 100), 2),
+                "% User tasks incomplete and overdue": round((u_overdue/u_total * 100), 2)
+                }]
+            else:
+                user_report = [u, "This user has no tasks assigned"]
+            
+            json.dump(user_report, u_report_f)
+            u_report_f.write("\n")
     print("Report generated")
 
 generate_report()
-write_tasks()
-read_users()
-print(USERS_INFO)
-
-#with open("users_overview.txt", "w", encoding="utf-8") as u_report:
-    # Total users from user_info dict
-    # Total tasks - global var?
-    # for each user : -Total tasks assigned, complete vs incomplete and overdue(%)
-
-
+#write_tasks()
