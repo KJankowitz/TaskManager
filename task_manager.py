@@ -24,7 +24,7 @@ def reg_user():
     print("Enter credentials of new user.")
     while True:
         new_user = input("Enter new username:\n")
-        if new_user not in users_info:
+        if new_user not in USERS_INFO:
             break
         print("Username already exists. Please use another.")
 
