@@ -110,9 +110,11 @@ def generate_report():
     
     total_users = len(USERS_INFO)
     with open("user_overview.txt", "w", encoding="utf-8") as u_report_f:
-        report_head = ({"Total users": total_users},{"Total tasks": total_tasks})
+        #report_head = ({"Total users": total_users},{"Total tasks": total_tasks})
         
-        json.dump(report_head, u_report_f)
+        json.dump({"Total users": total_users}, u_report_f)
+        u_report_f.write("\n")
+        json.dump({"Total tasks": total_tasks}, u_report_f)
         u_report_f.write("\n")
 
         for u in USERS_INFO:
@@ -126,15 +128,15 @@ def generate_report():
                         u_complete += 1
                 u_incomplete = u_total - u_complete
                 u_overdue = len(check_overdue(u_tasks))
-                user_report = (u, {
+                user_report = {u : {
                 "Total user tasks": u_total,
                 "% Of total tasks assigned to user": round((u_total/total_tasks * 100), 2),
                 "% Tasks completed by user": round((u_complete/u_total * 100), 2),
                 "% User tasks incomplete": round((u_incomplete/u_total * 100), 2),
                 "% User tasks incomplete and overdue": round((u_overdue/u_total * 100), 2)
-                })
+                }}
             else:
-                user_report = u, "This user has no tasks assigned"
+                user_report = {u : "This user has no tasks assigned"}
             
             json.dump(user_report, u_report_f)
             u_report_f.write("\n")
@@ -153,19 +155,25 @@ def gen_task_stats():
             generate_report()
 
 
-# def gen_user_stats():
-#     while True:
-#         try:
-#             with open("user_overview.txt", "r", encoding="utf-8") as u_file:
-#                 for line in u_file:
-#                     n_line = line.strip()
-#                     dicts = json.loads(n_line[1])
-#                     print(f"{n_line[0]}\n{dicts}")
-#             break
-#         except FileNotFoundError:
-#             generate_report()
+def gen_user_stats():
+    while True:
+        try:
+            with open("user_overview.txt", "r", encoding="utf-8") as u_file:
+                print("User Overview:")
+                for line in u_file:
+                    dicts = json.loads(line)
+                    for key in dicts:
+                        if not isinstance(dicts[key], dict):
+                            print(f"\n{key} : {dicts[key]}")
+                            continue
+                        print(f"\n{key}")
+                        for nested_task in dicts[key]:
+                            print(f"{nested_task} : {dicts[key][nested_task]}")
+            break
+        except FileNotFoundError:
+            generate_report()
 
 
 #generate_report()
 
-# gen_user_stats()
+gen_user_stats()

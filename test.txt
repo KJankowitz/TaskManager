@@ -1,6 +1,8 @@
 {"Task": "Register Users with task_manager.py", "Assigned to": "admin", "Date assigned": "10 Oct 2019", "Due date": "2019-10-20", "Task complete?": "No", "Task description": "Use task_manager.py to add the usernames and passwords for all team members that will be using this program."}
-{"Task": "Assign initial tasks", "Assigned to": "admin", "Date assigned": "10 Oct 2019", "Due date": "2019-10-25", "Task complete?": "No", "Task description": "Use task_manager.py to assign each team member with appropriate tasks"}
+{"Task": "Assign initial tasks", "Assigned to": "admin", "Date assigned": "10 Oct 2019", "Due date": "2019-10-25", "Task complete?": "Yes", "Task description": "Use task_manager.py to assign each team member with appropriate tasks"}
 {"Task": "Camping", "Assigned to": "Frik", "Date assigned": "11 Mar 2024", "Due date": "2024-03-25", "Task complete?": "No", "Task description": "Get tent and sleeping bag"}
-{"Task": "write", "Assigned to": "admin", "Date assigned": "11 Mar 2024", "Due date": "2025-01-12", "Task complete?": "No", "Task description": "write stuff"}
+{"Task": "write", "Assigned to": "admin", "Date assigned": "11 Mar 2024", "Due date": "2024-03-30", "Task complete?": "No", "Task description": "write stuff"}
 {"Task": "sing", "Assigned to": "Tom", "Date assigned": "11 Mar 2024", "Due date": "2024-01-12", "Task complete?": "No", "Task description": "to sing a song"}
 {"Task": "sing", "Assigned to": "Tom", "Date assigned": "2024-03-11", "Due date": "2024-05-2", "Task complete?": "No", "Task description": "blah"}
+{"Task": "Test", "Assigned to": "John", "Date assigned": "2024-03-20", "Due date": "2024-04-5", "Task complete?": "No", "Task description": "To test everything"}
+{"Task": "Real test", "Assigned to": "John", "Date assigned": "2024-03-20", "Due date": "2024-5-9", "Task complete?": "No", "Task description": "to see if everything works"}

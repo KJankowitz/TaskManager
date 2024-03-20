@@ -7,9 +7,8 @@ import json
 # dictionaries. However, when I got to the later parts of having to edit tasks
 # and write back to the text files, things got a little complicated.
 # I hope my comments make sense and that leaving the text file in json format
-# is okay. Although I feel like I bit off a little more than I could chew, I
-# really wanted to try to work it out independantly, so I am looking
-# forward your feedback and advice for the future :)
+# is okay. I really wanted to challenge myself try to work it out independantly,
+# so I am looking forward your feedback and advice for the future :)
 
 # === Define Functions ===
 ALL_TASKS = []
@@ -46,7 +45,7 @@ def dict_tasks():
     content of the tasks in dictionary format for easy manipulation. Appends to
     ALL_TASKS list.
     '''
-    with open("test1.txt", "r", encoding="utf-8") as t_file:
+    with open("test.txt", "r", encoding="utf-8") as t_file:
         for task_line in t_file:
             one_task = task_line.strip()
             one_task = one_task.split(", ")
@@ -65,7 +64,7 @@ def write_tasks():
     '''
     Writes the content of ALL_TASKS back to text file as dictionary objects
     '''
-    with open("test1.txt", "w", encoding="utf-8") as f_out:
+    with open("test.txt", "w", encoding="utf-8") as f_out:
         for task in ALL_TASKS:
             json.dump(task, f_out)
             f_out.write("\n")
@@ -74,13 +73,17 @@ def read_tasks():
     '''
     Read all tasks from text file in json format to append to ALL_TASKS list
     '''
-    with open("test1.txt", "r", encoding="utf-8") as test_file:
+    with open("test.txt", "r", encoding="utf-8") as test_file:
         for line in test_file:
             one_task = json.loads(line)
             if one_task not in ALL_TASKS:
                 ALL_TASKS.append(one_task)
 
 def read_users():
+    '''
+    Reads user.txt file and stores all current users and passwords in USERS_INFO
+    in dictionary format.
+    '''
     with open("user.txt", "r", encoding = "utf-8") as file:
         for line in file:
             single_line = line.strip()
@@ -110,7 +113,6 @@ def date_valid(due_date):
     try:
         current_date = d.datetime.today()
         #YYYY-MM-DD
-        today = current_date.strftime("%Y-%m-%d")
 
         due_date_obj = d.datetime.strptime(due_date, "%Y-%m-%d")
         if due_date_obj < current_date:
@@ -193,16 +195,16 @@ def view_mine(user):
             my_tasks.append(a_task)
     return my_tasks
 
-def edit_task(number, action, user):
+def edit_task(number, step, user):
     '''
     Takes input number of task, action to perform and current logged-on user to
     edit task info, such as user assigned, completed or due date. Appends changed
     data back to ALL_TASKS dict list.
     '''
     task_list = view_mine(user)
-    if action == "c":
+    if step == "c":
         task_list[number - 1]["Task complete?"] = "Yes"
-    elif action == "au":
+    elif step == "au":
 
         while True:
             new_au = input("Enter the new user assigned to this task:\n")
@@ -210,12 +212,14 @@ def edit_task(number, action, user):
                 break
             print("Username does not exist. Please check spelling or add user first.")
         task_list[number - 1]["Assigned to"] = new_au
-    elif action == "dd":
+    elif step == "dd":
         while True:
             new_date = input("Please enter new due date (YYYY-MM-DD):\n")
             if date_valid(new_date):
                 break
         task_list[number - 1]["Due date"] = new_date
+    else:
+        print("Error, not a valid option")
 
     for entry in task_list:
         if entry not in ALL_TASKS:
@@ -244,14 +248,13 @@ def generate_reports():
             "% overdue": round(len(check_overdue(ALL_TASKS))/total_tasks * 100, 2)
         })
         json.dump(task_report, t_report_f)
-    
+
     total_users = len(USERS_INFO)
     with open("user_overview.txt", "w", encoding="utf-8") as u_report_f:
-        report_head = ({
-            "Total users": total_users,
-            "Total tasks": total_tasks,
-            })
-        json.dump(report_head, u_report_f)
+
+        json.dump({"Total users": total_users}, u_report_f)
+        u_report_f.write("\n")
+        json.dump({"Total tasks": total_tasks}, u_report_f)
         u_report_f.write("\n")
 
         for u in USERS_INFO:
@@ -259,26 +262,65 @@ def generate_reports():
             u_total = len(u_tasks)
             if u_total !=0:
                 u_complete = 0
-        
+
                 for u_task in u_tasks:
                     if u_task["Task complete?"] == "Yes":
                         u_complete += 1
                 u_incomplete = u_total - u_complete
                 u_overdue = len(check_overdue(u_tasks))
-                user_report = [u, {
+                user_report = {u : {
                 "Total user tasks": u_total,
                 "% Of total tasks assigned to user": round((u_total/total_tasks * 100), 2),
                 "% Tasks completed by user": round((u_complete/u_total * 100), 2),
                 "% User tasks incomplete": round((u_incomplete/u_total * 100), 2),
                 "% User tasks incomplete and overdue": round((u_overdue/u_total * 100), 2)
-                }]
+                }}
             else:
-                user_report = [u, "This user has no tasks assigned"]
-            
+                user_report = {u : "This user has no tasks assigned"}
+
             json.dump(user_report, u_report_f)
             u_report_f.write("\n")
     print("Report generated")
 
+
+def gen_task_stats():
+    '''
+    Reads task_overview.txt (or creates it if it doesn't exist yet) and prints 
+    out the information in a user-friendly readable format.
+    '''
+    while True:
+        try:
+            with open("task_overview.txt", "r", encoding="utf-8") as t_file:
+                file_data = json.load(t_file)
+            print("Task Overview:\n")
+            for line in file_data:
+                print(f"{line} : {file_data[line]}")
+            break
+        except FileNotFoundError:
+            generate_reports()
+
+
+def gen_user_stats():
+    '''
+    Reads user_overview.txt (or creates it if it doesn't exist yet) and prints 
+    out the information in a user-friendly readable format.
+    '''
+    while True:
+        try:
+            with open("user_overview.txt", "r", encoding="utf-8") as u_file:
+                print("User Overview:")
+                for line in u_file:
+                    dicts = json.loads(line)
+                    for key in dicts:
+                        if not isinstance(dicts[key], dict):
+                            print(f"\n{key} : {dicts[key]}")
+                            continue
+                        print(f"\n{key}")
+                        for nested_task in dicts[key]:
+                            print(f"{nested_task} : {dicts[key][nested_task]}")
+            break
+        except FileNotFoundError:
+            generate_reports()
 
 # === Program Code ===
 # --- Login section ---
@@ -301,92 +343,99 @@ while True:
         print("Invalid username. Try again.")
 
 # --- Menu Section ---
-# # Repeat menu presentation with while loop
-# while True:
-#     # Present the menu to the user and
-#     # make sure that the user input is converted to lower case.
-#     # Check if user is admin for special s option:
-#     if USER_NAME == "admin":
-#         menu = input('''\nSelect one of the following options:
-# r - register a user
-# a - add task
-# va - view all tasks
-# vm - view my tasks
-# s - view statistics
-# e - exit
-# : ''').lower()
-#     else:
-#         menu = input('''Select one of the following options:
-# a - add task
-# va - view all tasks
-# vm - view my tasks
-# e - exit
-# : ''').lower()
+# Repeat menu presentation with while loop
+while True:
+    # Present the menu to the user and
+    # make sure that the user input is converted to lower case.
+    # Check if user is admin for special s option:
+    if USER_NAME == "admin":
+        menu = input('''\nSelect one of the following options:
+r - register a user
+a - add task
+va - view all tasks
+vm - view my tasks
+gr - generate reports
+ds - display statistics
+e - exit
+: ''').lower()
+    else:
+        menu = input('''Select one of the following options:
+a - add task
+va - view all tasks
+vm - view my tasks
+e - exit
+: ''').lower()
 
-#     # Register a new user
-#     if menu == "r":
+    # Register a new user
+    if menu == "r":
 
-#         if USER_NAME == "admin":    # Only valid if user is admin
-#           print(reg_user())
+        if USER_NAME == "admin":    # Only valid if user is admin
+            print(reg_user())
 
-#         # Catch unauthorized user
-#         else:
-#             print("You are not authorized. Please request an admin to perform this action.")
+        # Catch unauthorized user
+        else:
+            print("You are not authorized. Please request an admin to perform this action.")
 
-#     # Add a new task
-#     elif menu == "a":
-#           print(add_task())
-#     # View all tasks
-#     elif menu == "va":
+    # Add a new task
+    elif menu == "a":
+        print(add_task())
 
-#         view_all()
+    # View all tasks
+    elif menu == "va":
+        view_all()
 
-#     # View tasks assigned to current user
-#     elif menu == "vm":
-#         print(f"\nAll tasks assigned to {USER_NAME}: ")
+    # View tasks assigned to current user
+    elif menu == "vm":
+        print(f"\nAll tasks assigned to {USER_NAME}: ")
 
-#        for count, task in enumerate(view_mine(USER_NAME), 1):
-#           print(f"\n{count}")
-#           for key, value in task.items():
-#               print(f"{key} : {value}")
+        for count, task in enumerate(view_mine(USER_NAME), 1):
+            print(f"\n{count}")
+            for key, value in task.items():
+                print(f"{key} : {value}")
 
-#         edit = input("Do you want to edit tasks? Enter 'y' or 'n':\n").lower()
-#         if edit == "y":
-#             option = int(input('''
-# Select number of task you wish to edit, 
-# or enter -1 to return to main menu: '''))
-#             if option == -1:
-#                 print("exit to main menu")
-#             action = input('''
-# Type:
-#     c - mark task as complete
-#     au - change assigned user
-#     dd - change task due date
-# ''').lower()
+        edit = input("Do you want to edit tasks? Enter 'y' or 'n':\n").lower()
+        if edit == "n":
+            continue
+        if edit == "y":
+            option = int(input('''
+Select number of task you wish to edit,
+or enter -1 to return to main menu: '''))
+            if option == -1:
+                continue
+            action = input('''
+Type:
+    c - mark task as complete
+    au - change assigned user
+    dd - change task due date
+''').lower()
 
-#             edit_task(option, action, USER_NAME)
-#             write_tasks()
+            edit_task(option, action, USER_NAME)
+            write_tasks()
+        else:
+            print("Error, not a valid option")
+            continue
+        
+    # Generate reports - admin user only:
+    elif menu == "gr":
+        if USER_NAME == "admin":
+            generate_reports()
 
-#     # Statistics menu for admin user only:
-#     elif menu == "s":
-#         task_num = 0
-# Because I'm using the length of usersnames list, it must be recalculated at
-# login if users were added.
-#         print("Please note, if you added a new user on this session, please
-# log off and back on to refresh statistics.")
+    # Statistics menu for admin user only:
+    elif menu == "ds":
+        if USER_NAME == "admin":
+            option = input('''
+    Type:
+            t - display task statistics
+            u - display user statistics\n''')
+            if option == "t":
+                gen_task_stats()
+            elif option == "u":
+                gen_user_stats()
+            else:
+                print("Error, not a valid option")
 
-#         with open("tasks.txt", "r", encoding = "utf-8") as file:
-
-#             for line in file:
-#                 task_num += 1
-
-#         print(f'''\n
-# Total number of tasks:        \t{task_num}
-# Total number of users:        \t{len(usernames)}
-# ''')
-
-#     elif menu == "e":
-#         print("Goodbye!!!")
-#         exit()
-#     else:
-#         print("You have entered an invalid input. Please try again")
+    elif menu == "e":
+        print("Goodbye!!!")
+        exit()
+    else:
+        print("You have entered an invalid input. Please try again")
